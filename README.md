@@ -2,7 +2,7 @@
 
 A Streamlit app for checking how good a set of forecasts really is. Upload a CSV with actual values, predictions and an optional benchmark forecast, and the app breaks the error down so you can see where a model works and where it doesn't.
 
-Built in 2022 while I worked on natural-gas demand forecasting in consulting. The interface is in Portuguese.
+Built in 2022. The interface is in Portuguese.
 
 ## What it shows
 
