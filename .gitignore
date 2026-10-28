@@ -6,3 +6,7 @@ __pycache__/
 # TOML extensions
 *.toml
 
+
+# IDE
+.idea/
+.vscode/
