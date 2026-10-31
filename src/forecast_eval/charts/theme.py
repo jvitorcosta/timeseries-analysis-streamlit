@@ -1,7 +1,7 @@
 """Shared look of every chart."""
 
+from collections.abc import Iterator
 from itertools import cycle
-from typing import Any
 
 import plotly.graph_objects as go
 
@@ -15,7 +15,7 @@ MODELS = ("#d84797", "#06a77d", "#5158bb", "#de9e36", "#419797", "#c31f1f", "#6b
 HEIGHT = 420
 
 
-def model_colours() -> Any:
+def model_colours() -> Iterator[str]:
     return cycle(MODELS)
 
 

@@ -85,3 +85,8 @@ def test_no_usable_rows_is_a_mapping_error(raw: pd.DataFrame, mapping: ColumnMap
     raw["y"] = np.nan
     with pytest.raises(ColumnMappingError, match="No rows"):
         prepare(raw, mapping)
+
+
+def test_timezones_are_dropped_from_dates(raw: pd.DataFrame, mapping: ColumnMap) -> None:
+    raw["day"] = raw["day"] + "T00:00:00Z"
+    assert prepare(raw, mapping).frame["date"].dt.tz is None

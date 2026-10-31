@@ -57,7 +57,8 @@ def _to_numeric(column: pd.Series, name: str) -> pd.Series:
 
 def _to_dates(column: pd.Series, name: str) -> pd.Series:
     try:
-        return pd.to_datetime(column, format="ISO8601").dt.normalize()
+        dates = pd.to_datetime(column, format="ISO8601", utc=True)
+        return dates.dt.tz_localize(None).dt.normalize()
     except (ValueError, TypeError, AttributeError) as err:
         raise ColumnMappingError(f"Column '{name}' must hold ISO dates (YYYY-MM-DD).") from err
 

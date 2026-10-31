@@ -4,6 +4,7 @@ import streamlit as st
 
 from forecast_eval.errors import ColumnMappingError
 from forecast_eval.ui import benchmark, overview, residuals
+from forecast_eval.ui.components import table
 from forecast_eval.ui.period import choose_period
 from forecast_eval.ui.sidebar import Dataset, choose_dataset
 
@@ -28,4 +29,9 @@ def main() -> None:
     if dataset.dropped_rows:
         st.caption(f"{dataset.dropped_rows} rows without an actual or forecast were left out.")
     frame = choose_period(dataset.frame)
+    if frame.empty:
+        st.info("No data in this period. Choose a wider window.")
+        return
+    with st.expander("Data in this period"):
+        table(frame)
     PAGES[page](frame, dataset.models)

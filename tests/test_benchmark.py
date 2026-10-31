@@ -71,3 +71,9 @@ def test_error_table_shows_signed_percentage_error(scored: pd.DataFrame) -> None
 )
 def test_error_cell_style(value: float, colour: str) -> None:
     assert colour in error_cell_style(value, tolerance=5)
+
+
+def test_error_table_keeps_keys_when_a_model_shares_their_name(scored: pd.DataFrame) -> None:
+    table = error_table(scored, {"actual": "forecast"}, ["date"])
+    assert table["actual"].tolist() == [100.0] * 4
+    assert table["actual (forecast)"].tolist() == [90.0] * 4

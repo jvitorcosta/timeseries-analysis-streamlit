@@ -59,6 +59,8 @@ class ColumnMap:
         missing = [name for name in (*roles, *self.benchmarks) if name not in columns]
         if missing:
             raise ColumnMappingError(f"Columns not in the file: {', '.join(missing)}.")
+        if self.forecast == HYBRID:
+            raise ColumnMappingError(f"Rename the forecast column '{HYBRID}': the app uses it.")
         reserved = (set(self.models) - {self.forecast}) & (RESERVED | set(roles))
         if reserved:
             names = ", ".join(sorted(reserved))

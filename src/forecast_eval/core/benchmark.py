@@ -38,7 +38,7 @@ def error_table(
         f"{name} error %": percentage_error(frame[ACTUAL], frame[column])
         for name, column in models.items()
     }
-    forecasts = {name: frame[column] for name, column in models.items()}
+    forecasts = {f"{name} (forecast)": frame[column] for name, column in models.items()}
     return frame[[*keys, ACTUAL]].assign(**errors, **forecasts)
 
 

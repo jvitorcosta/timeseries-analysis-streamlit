@@ -68,7 +68,9 @@ def test_short_windows_stay_clean(app: AppTest, page: str, start: date, end: dat
 
 
 def test_holiday_section_shows_on_a_healthy_run(app: AppTest) -> None:
-    assert "Holidays" in subheaders(open_page(app, "Residuals"))
+    open_page(app, "Residuals")
+    assert "Holidays" in subheaders(app)
+    assert any(item.label == "Error on holidays, all series" for item in app.expander)
 
 
 def test_rmse_by_month_and_weekday_shows(app: AppTest) -> None:
@@ -179,3 +181,47 @@ def test_widgets_have_labels(app: AppTest) -> None:
         open_page(app, page)
         for widget in [*app.selectbox, *app.radio, *app.checkbox, *app.slider]:
             assert widget.label
+
+
+GAPPY = b"""series,date,actual,forecast
+a,2022-01-01,1,2
+a,2022-01-02,1,2
+a,2022-03-01,1,2
+"""
+AWARE = b"""series,date,actual,forecast
+a,2022-01-01T00:00:00Z,1,2
+a,2022-01-02T00:00:00Z,1,2
+"""
+
+
+@pytest.mark.parametrize("page", PAGES)
+def test_a_window_inside_a_data_gap_explains_itself(app: AppTest, page: str) -> None:
+    upload(app, GAPPY)
+    open_page(app, page)
+    set_window(app, date(2022, 2, 1), date(2022, 2, 2))
+    assert any("No data" in item.value for item in app.info)
+
+
+def test_timezone_aware_dates_stay_clean(app: AppTest) -> None:
+    upload(app, AWARE)
+    assert_clean(app)
+    open_page(app, "Residuals")
+
+
+@pytest.mark.parametrize("page", PAGES)
+def test_a_new_file_replaces_earlier_selections(app: AppTest, page: str) -> None:
+    open_page(app, page)
+    set_window(app, date(2023, 6, 1), date(2023, 7, 1))
+    if page == "Residuals":
+        app.selectbox(key="series").select("site_f").run()
+    csv = generate_sample().head(400).to_csv(index=False).encode()
+    upload(app, csv)
+    assert_clean(app)
+
+
+def test_a_forecast_named_hybrid_is_explained(app: AppTest) -> None:
+    frame = generate_sample().head(400).rename(columns={"forecast": "Hybrid"})
+    upload(app, frame.to_csv(index=False).encode())
+    app.selectbox(key="map_forecast").select("Hybrid").run()
+    assert not app.exception
+    assert any("Hybrid" in item.value for item in app.error)
