@@ -1,4 +1,4 @@
-"""Evaluate daily forecasts: where they miss, by series, period and holiday, and against a benchmark."""
+"""Evaluate daily forecasts by series, period and holiday, and against a benchmark."""
 
 from importlib.metadata import version
 
