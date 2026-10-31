@@ -1,13 +1,130 @@
-google-auth==2.6.2
-gsheetsdb==0.1.13.1
-matplotlib==3.5.1
-matplotlib-inline==0.1.2
-numpy==1.22.2
-pandas==1.4.1
-plotly==5.6.0
-scipy==1.8.0
-seaborn==0.11.2
-statsmodels==0.13.2
-streamlit==1.5.1
-toml==0.10.2
-click==8
+-e .
+altair==6.3.0
+    # via streamlit
+anyio==4.15.1
+    # via
+    #   starlette
+    #   streamlit
+attrs==26.1.0
+    # via
+    #   jsonschema
+    #   referencing
+certifi==2026.10.23
+    # via requests
+charset-normalizer==3.5.2
+    # via requests
+click==8.5.0
+    # via
+    #   streamlit
+    #   uvicorn
+formulaic==1.2.2
+    # via statsmodels
+h11==0.16.0
+    # via uvicorn
+idna==3.20
+    # via
+    #   anyio
+    #   requests
+interface-meta==2.0.1
+    # via formulaic
+itsdangerous==2.2.0
+    # via streamlit
+jinja2==3.1.6
+    # via
+    #   altair
+    #   pydeck
+jsonschema==4.26.0
+    # via altair
+jsonschema-specifications==2025.9.1
+    # via jsonschema
+markupsafe==3.0.4
+    # via jinja2
+narwhals==2.28.0
+    # via
+    #   altair
+    #   formulaic
+    #   plotly
+numpy==2.5.4
+    # via
+    #   formulaic
+    #   pandas
+    #   patsy
+    #   pydeck
+    #   scipy
+    #   statsmodels
+    #   streamlit
+    #   timeseries-analysis-streamlit
+packaging==26.3
+    # via
+    #   altair
+    #   patsy
+    #   plotly
+    #   statsmodels
+    #   streamlit
+pandas==3.1.0
+    # via
+    #   formulaic
+    #   statsmodels
+    #   streamlit
+    #   timeseries-analysis-streamlit
+patsy==1.0.3
+    # via statsmodels
+pillow==13.0.0
+    # via streamlit
+plotly==7.1.0
+    # via timeseries-analysis-streamlit
+protobuf==7.36.2
+    # via streamlit
+pyarrow==26.0.0
+    # via streamlit
+pydeck==0.9.3
+    # via streamlit
+python-dateutil==3.0.0
+    # via pandas
+python-multipart==0.0.32
+    # via streamlit
+referencing==0.37.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+requests==2.34.2
+    # via streamlit
+rpds-py==2026.9.1
+    # via
+    #   jsonschema
+    #   referencing
+scipy==1.18.1
+    # via
+    #   formulaic
+    #   statsmodels
+    #   timeseries-analysis-streamlit
+six==1.17.0
+    # via python-dateutil
+starlette==1.10.0
+    # via streamlit
+statsmodels==0.15.0
+    # via timeseries-analysis-streamlit
+streamlit==1.66.1
+    # via timeseries-analysis-streamlit
+typing-extensions==4.16.0
+    # via
+    #   altair
+    #   anyio
+    #   formulaic
+    #   referencing
+    #   starlette
+    #   streamlit
+tzdata==2026.6
+    # via
+    #   pandas
+    #   python-dateutil
+urllib3==2.8.0
+    # via requests
+uvicorn==0.54.0
+    # via streamlit
+watchdog==6.0.0 ; sys_platform != 'darwin'
+    # via streamlit
+websockets==17.4
+    # via streamlit
+wrapt==2.5.2
+    # via formulaic
