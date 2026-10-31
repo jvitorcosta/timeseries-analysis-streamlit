@@ -7,9 +7,7 @@ import pandas as pd
 
 from forecast_eval.core.aggregate import Summary, summarize
 from forecast_eval.core.metrics import percentage_error
-from forecast_eval.core.schema import ACTUAL, SERIES
-
-HYBRID = "Hybrid"
+from forecast_eval.core.schema import ACTUAL, HYBRID, SERIES
 
 
 def common_rows(frame: pd.DataFrame, columns: Sequence[str]) -> pd.DataFrame:

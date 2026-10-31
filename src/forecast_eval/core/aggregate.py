@@ -79,9 +79,10 @@ def group_daily_totals(frame: pd.DataFrame, models: Sequence[str] = (FORECAST,))
     columns = [ACTUAL, *models]
     complete = frame.dropna(subset=columns)
     totals = complete.groupby([DATE, GROUP], as_index=False, observed=True)[columns].sum()
-    return add_errors(totals, models[0])
+    return add_errors(totals.reset_index(drop=True), models[0])
 
 
 def filter_period(frame: pd.DataFrame, start: date, end: date) -> pd.DataFrame:
     days = frame[DATE].dt.date
-    return frame.loc[(days >= start) & (days <= end)].copy()
+    kept: pd.DataFrame = frame.loc[(days >= start) & (days <= end)].copy()
+    return kept
