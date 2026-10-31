@@ -1,88 +1,99 @@
 # Forecast error analysis
 
-Evaluate daily forecasts: where they miss, by series, period and holiday, and against a benchmark.
-
 [![CI](https://github.com/jvitorcosta/timeseries-analysis-streamlit/actions/workflows/ci.yml/badge.svg)](https://github.com/jvitorcosta/timeseries-analysis-streamlit/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.12%2B-blue)
-[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## Requirements
+A single MAPE number says a forecast is "5% off". It doesn't say **where**: which series,
+which weekdays, which holidays, or whether a simpler baseline would have done better.
+This app answers those questions for daily forecasts.
 
-[uv](https://docs.astral.sh/uv/) (it installs Python 3.12 for you), Git ≥ 2.31 and `make`:
+I first built it in 2022 for daily demand forecasting, to compare candidate models against
+the incumbent forecast, series by series and day by day. This version is a rebuild on a
+current stack, with tested metrics and a synthetic sample dataset.
 
-| Tool | macOS | Linux (Debian/Ubuntu) | Windows (PowerShell) |
-| ---- | ----- | --------------------- | -------------------- |
-| uv   | `brew install uv` | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | `winget install astral-sh.uv` |
-| Git  | `brew install git` | `sudo apt install git` | `winget install Git.Git` |
-| make | `xcode-select --install` | `sudo apt install make` | `winget install ezwinports.make` |
+![Residuals page](docs/app.png)
 
-All `make` targets work in bash, zsh, PowerShell and cmd. Without `make`, run the
-`uv run ...` line from the [Makefile](Makefile). On Windows, also run
-`git config --global core.longpaths true` once.
+## What it shows
 
-## Quickstart
+**Metrics**
+- Share of days above a 5% or 20% tolerance, per series and for each group's daily total.
+- MAPE and RMSE, per series and per group total, over any chosen period.
+
+**Residuals**
+- Actual vs forecast, error over time, and standardized residuals, per series.
+- Error and APE by month and weekday, RMSE by month and weekday, and the worst days.
+- Classical decomposition of the actual, forecast or error, with a 7, 30 or 365-day period.
+- ACF and PACF of the errors and squared errors, with lags in calendar days.
+- Error on holidays across all series, using a Brazilian and São Paulo calendar that
+  includes moving dates such as Carnival and Corpus Christi.
+
+**Benchmark**
+- Several forecasts scored on exactly the same rows, for a group total or one series.
+- Colour-coded daily tables of signed percentage error.
+- An optional hybrid that takes each series from a forecast you choose. It's scored on the
+  same data, so it describes the past and doesn't show how it would do on new data.
+
+## Metrics
+
+Error is always `actual - forecast`, so a positive error is an under-forecast.
+
+| Metric | Definition | Notes |
+|---|---|---|
+| Percentage error | `100 * (actual - forecast) / actual` | Undefined on a zero actual |
+| MAPE | Mean of the absolute percentage error | Skips zero actuals and shows how many |
+| MPE | Mean of the percentage error | Positive means the forecast runs low |
+| RMSE | Root mean squared error | |
+| Deviation from forecast | `100 * \|actual - forecast\| / \|forecast\|` | Drives "days above tolerance" |
+| Standardized residual | `(error - mean) / standard deviation` | Needs 3 days with different errors |
+
+Tolerance divides by the forecast on purpose: it asks how far the outcome landed from what
+was planned. A forecast of zero that misses counts as above any tolerance. MAPE divides by
+the actual, so the two can disagree on the same day.
+
+Forecasts are scored as given, with no clipping or cap. Group views score the daily total
+of the group, so opposite errors in its series can net out.
+
+## Input format
+
+One row per series per day. Pick the column names in the sidebar after uploading. The app
+guesses common ones.
+
+| Column | Example | Purpose |
+|---|---|---|
+| series id | `site_a` | the series being forecast |
+| date | `2022-03-01` | day, in ISO format |
+| actual | `1520.4` | observed value |
+| forecast | `1498.0` | the model being evaluated |
+| benchmarks (optional) | `1610.2` | other forecasts to compare against |
+| group (optional) | `north` | a grouping for aggregated views |
+
+Rows without an actual or forecast are left out and counted. The app opens on a seeded,
+fully synthetic sample, which you can download to see the format.
+
+## Run it
+
+You need [uv](https://docs.astral.sh/uv/) and `make`.
 
 ```bash
-git clone https://github.com/jvitorcosta/timeseries-analysis-streamlit.git
-cd timeseries-analysis-streamlit
-make install   # uv sync + pre-commit hooks
-make check     # lint + typecheck + tests
+make install
+make run
 ```
 
 ## Development
 
-| Command          | What it does                              |
-| ---------------- | ----------------------------------------- |
-| `make help`      | List every target                         |
-| `make format`    | Ruff format + safe autofixes              |
-| `make lint`      | Ruff lint + format check                  |
-| `make typecheck` | mypy (strict)                             |
-| `make test`      | pytest                                    |
-| `make cov`       | pytest with coverage (fails under 80%)    |
-| `make check`     | Everything CI runs                        |
-| `make upgrade`   | Bump all deps in `uv.lock`                |
-
-Add dependencies with `uv add <pkg>` (runtime) or `uv add --dev <pkg>` (tooling).
-
-## Project layout
-
-```
-.
-├── CLAUDE.md              # Context Claude Code loads every session
-├── .mcp.json              # Shared MCP servers
-├── .claude/
-│   ├── settings.json      # Permissions + hooks (team-shared)
-│   ├── rules/             # Topic-scoped guidance (style, testing, API)
-│   ├── commands/          # /review, /fix-issue
-│   ├── skills/            # Auto-loaded workflows (release)
-│   ├── agents/            # code-reviewer, security-auditor
-│   └── hooks/             # Bash guard + auto-format
-├── src/forecast_eval/
-├── tests/
-├── Makefile
-└── pyproject.toml
-```
-
-## Working with Claude Code
-
-This repo ships a full `.claude/` setup. See [CLAUDE.md](CLAUDE.md) for the
-project context and [CONTRIBUTING.md](CONTRIBUTING.md#working-with-claude-code)
-for how to extend it. Personal overrides go in `CLAUDE.local.md` and
-`.claude/settings.local.json`; both are gitignored.
-
-## Keeping up with the template
-
-This project was generated from a [Copier](https://copier.readthedocs.io) template.
-To pull in template improvements:
-
 ```bash
-uvx copier update
+make check
 ```
 
-`README.md`, `CHANGELOG.md` and `src/forecast_eval/__init__.py` belong to this project:
-`copier update` leaves them alone (`protect_project_files` in `.copier-answers.yml`).
+This runs ruff, mypy in strict mode, and pytest with coverage. The tests include headless
+runs of every page with Streamlit's AppTest.
+
+The code lives in `src/forecast_eval/`: `core/` holds the calculations, `charts/` builds
+Plotly figures, and `ui/` holds the Streamlit pages. `core/` and `charts/` don't import
+Streamlit, and a test enforces it. To rebuild the sample, run
+`uv run python scripts/make_sample_data.py`.
 
 ## License
 
-[MIT](LICENSE) © Vitor Pinheiro
+[MIT](LICENSE)

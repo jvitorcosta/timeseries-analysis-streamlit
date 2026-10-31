@@ -5,7 +5,7 @@ from typing import Any
 
 import plotly.graph_objects as go
 
-ACTUAL = "#222222"
+ACTUAL = "#3b82f6"
 FORECAST = "#ea526f"
 ERROR = "#8d8d8d"
 MAPE = "#6e44ff"

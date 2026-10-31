@@ -36,7 +36,13 @@ from forecast_eval.core.schema import (
     SERIES,
 )
 from forecast_eval.errors import InsufficientDataError
-from forecast_eval.ui.components import ERROR_NOTE, chart, summary_metrics, zero_actual_note
+from forecast_eval.ui.components import (
+    ERROR_NOTE,
+    chart,
+    summary_metrics,
+    table,
+    zero_actual_note,
+)
 
 STANDARDIZED = "standardized"
 _WORST_DAYS = 20
@@ -98,7 +104,7 @@ def _mape_section(series: pd.DataFrame, parts: pd.DataFrame) -> None:
     st.subheader("MAPE by month and weekday")
     with st.expander("Percentage errors"):
         worst = series.nlargest(_WORST_DAYS, APE)[[DATE, ACTUAL, FORECAST, APE]]
-        st.dataframe(worst, hide_index=True)
+        table(worst)
         chart(
             density(
                 series[PERCENTAGE_ERROR].to_numpy(),
@@ -140,7 +146,7 @@ def _holidays(frame: pd.DataFrame) -> None:
             "(optional) marks days that aren't public holidays."
         )
         chart(box_by(holidays, HOLIDAY, APE, "APE on holidays", "APE (%)"), key="holidays")
-        st.dataframe(holidays[[SERIES, DATE, HOLIDAY, APE]], hide_index=True)
+        table(holidays[[SERIES, DATE, HOLIDAY, APE]])
 
 
 def render(frame: pd.DataFrame, models: dict[str, str]) -> None:

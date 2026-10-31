@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help run install sync lock upgrade format lint typecheck test cov check pre-commit build clean
+.PHONY: help run requirements install sync lock upgrade format lint typecheck test cov check pre-commit build clean
 
 # Recipes use only `uv ...` and Python one-liners, so they behave the same in
 # bash/zsh (macOS, Linux) and cmd/PowerShell (Windows): no awk, rm or find.
@@ -10,6 +10,9 @@ help: ## Show this help
 
 run: ## Start the app
 	uv run streamlit run streamlit_app.py
+
+requirements: ## Regenerate requirements.txt (Streamlit Community Cloud) from uv.lock
+	uv export --no-hashes --no-dev --no-header -q -o requirements.txt
 
 install: ## Install deps and git hooks (first-time setup)
 	uv sync --all-groups

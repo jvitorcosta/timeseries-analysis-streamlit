@@ -2,11 +2,14 @@
 
 import math
 
+import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+from pandas.io.formats.style import Styler
 
 from forecast_eval.config.settings import TOLERANCES
 from forecast_eval.core.aggregate import Summary
+from forecast_eval.core.schema import DATE
 
 DEVIATION_NOTE = (
     "Days above tolerance use the deviation from forecast, which divides by the forecast: "
@@ -28,13 +31,18 @@ def chart(fig: go.Figure, key: str) -> None:
     st.plotly_chart(fig, key=key)
 
 
+def table(data: pd.DataFrame | Styler) -> None:
+    dates = {DATE: st.column_config.DateColumn("date", format="YYYY-MM-DD")}
+    st.dataframe(data, hide_index=True, column_config=dates)
+
+
 def summary_metrics(summary: Summary, *, label: str | None = None) -> None:
     """One row of metrics. `label` names the model when several are compared."""
     leading = [label] if label else []
     columns = st.columns(len(leading) + 3 + len(TOLERANCES))
     cells = iter(columns)
     if label:
-        next(cells).metric("Forecast", label)
+        next(cells).markdown(f"**{label}**")
     next(cells).metric("MAPE", percent(summary.mape))
     next(cells).metric("MPE", percent(summary.mpe))
     next(cells).metric("RMSE", number(summary.rmse))
@@ -44,6 +52,7 @@ def summary_metrics(summary: Summary, *, label: str | None = None) -> None:
             percent(summary.share_above(tolerance)),
             delta=f"{summary.days_above(tolerance)} days",
             delta_color="off",
+            delta_arrow="off",
         )
 
 

@@ -26,6 +26,12 @@ jobs:
       - name: Install
         run: uv sync --all-groups --locked
 
+      - name: Check requirements.txt is current
+        if: runner.os == 'Linux'
+        run: |
+          uv export --no-hashes --no-dev --no-header -q -o requirements.txt
+          git diff --exit-code requirements.txt
+
       - name: Lint
         run: |
           uv run ruff check .

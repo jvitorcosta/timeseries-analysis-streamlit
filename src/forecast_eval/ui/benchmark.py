@@ -17,7 +17,13 @@ from forecast_eval.core.benchmark import (
     model_summaries,
 )
 from forecast_eval.core.schema import DATE, GROUP, HYBRID, SERIES
-from forecast_eval.ui.components import ERROR_NOTE, chart, summary_metrics, zero_actual_note
+from forecast_eval.ui.components import (
+    ERROR_NOTE,
+    chart,
+    summary_metrics,
+    table,
+    zero_actual_note,
+)
 
 _MAX_STYLED_CELLS = 200_000
 
@@ -49,13 +55,13 @@ def _compare(rows: pd.DataFrame, models: dict[str, str], key: str) -> None:
 
 
 def _table(frame: pd.DataFrame, models: dict[str, str], keys: list[str]) -> None:
-    table = error_table(frame, models, keys)
-    if table.size > _MAX_STYLED_CELLS:
-        st.dataframe(table, hide_index=True)
+    rows = error_table(frame, models, keys)
+    if rows.size > _MAX_STYLED_CELLS:
+        table(rows)
         return
-    errors: list[Hashable] = [c for c in table.columns if c.endswith(" error %")]
+    errors: list[Hashable] = [c for c in rows.columns if c.endswith(" error %")]
     style = partial(error_cell_style, tolerance=MAIN_TOLERANCE)
-    st.dataframe(table.style.map(style, subset=errors), hide_index=True)
+    table(rows.style.map(style, subset=errors))
 
 
 def render(frame: pd.DataFrame, models: dict[str, str]) -> None:

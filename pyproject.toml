@@ -1,6 +1,6 @@
 [project]
 name = "timeseries-analysis-streamlit"
-version = "0.1.0"
+version = "2.0.0"
 description = "Evaluate daily forecasts: where they miss, by series, period and holiday, and against a benchmark."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -13,7 +13,7 @@ dependencies = [
     "plotly>=6",
     "scipy>=1.13",
     "statsmodels>=0.15",
-    "streamlit>=1.50",
+    "streamlit>=1.60",
 ]
 
 [build-system]

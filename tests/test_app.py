@@ -106,7 +106,7 @@ def test_benchmark_toggles(app: AppTest) -> None:
     open_page(app, "Benchmark")
     app.checkbox(key="hybrid").check().run()
     assert_clean(app)
-    assert any(m.value == "Hybrid" for m in app.metric)
+    assert any(m.value == "**Hybrid**" for m in app.markdown)
     assert any("same data" in c.value for c in app.caption)
     app.checkbox(key="tables").check().run()
     assert_clean(app)

@@ -1662,7 +1662,7 @@ wheels = [
 
 [[package]]
 name = "timeseries-analysis-streamlit"
-version = "0.1.0"
+version = "2.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
@@ -1690,7 +1690,7 @@ requires-dist = [
     { name = "plotly", specifier = ">=6" },
     { name = "scipy", specifier = ">=1.13" },
     { name = "statsmodels", specifier = ">=0.15" },
-    { name = "streamlit", specifier = ">=1.50" },
+    { name = "streamlit", specifier = ">=1.60" },
 ]
 
 [package.metadata.requires-dev]
