@@ -1,0 +1,83 @@
+[project]
+name = "timeseries-analysis-streamlit"
+version = "0.1.0"
+description = "Evaluate daily forecasts: where they miss, by series, period and holiday, and against a benchmark."
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "Vitor Pinheiro" }]
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "plotly>=6",
+    "scipy>=1.13",
+    "statsmodels>=0.15",
+    "streamlit>=1.50",
+]
+
+[build-system]
+requires = ["uv_build>=0.9,<1"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "forecast_eval"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18",
+    "pandas-stubs>=2.2",
+    "pre-commit>=4.3",
+    "pytest>=8.4",
+    "pytest-cov>=7.0",
+    "ruff>=0.14",
+]
+
+# ---------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "B",        # bugbear
+    "UP",       # pyupgrade
+    "SIM",      # simplify
+    "RUF",      # ruff-specific
+    "N",        # pep8-naming
+    "PTH",      # use pathlib
+    "S",        # bandit (security)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]  # assert is fine in tests
+
+# ---------------------------------------------------------------- mypy
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests", "scripts", "streamlit_app.py"]
+
+[[tool.mypy.overrides]]
+# No type stubs published for these.
+module = ["plotly.*", "scipy.*", "statsmodels.*"]
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["forecast_eval"]
+branch = true
+concurrency = ["thread"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80

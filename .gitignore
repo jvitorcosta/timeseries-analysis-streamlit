@@ -1,12 +1,30 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
+*.egg-info/
+dist/
+build/
 
-# TOML extensions
-*.toml
+# Environments
+.venv/
+.env
+.env.*
+!.env.example
 
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
 
-# IDE
+# Claude Code: personal, never committed
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Editors / OS
 .idea/
 .vscode/
+.DS_Store
+Thumbs.db

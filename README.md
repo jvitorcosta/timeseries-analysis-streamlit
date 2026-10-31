@@ -1,66 +1,88 @@
-# Forecast error analysis (Streamlit)
+# Forecast error analysis
 
-A single MAPE number says a forecast is "5% off". It doesn't say **where**: which sites,
-which weekdays, which holidays, or whether a simpler baseline would have done better.
-This app answers those questions for any daily forecast.
+Evaluate daily forecasts: where they miss, by series, period and holiday, and against a benchmark.
 
-I built it in 2022 while working on daily gas-demand forecasting at city-gate level, where
-a day above the error tolerance has a contractual cost. It was the tool for comparing
-candidate models against the incumbent forecast, series by series and day by day.
+[![CI](https://github.com/jvitorcosta/timeseries-analysis-streamlit/actions/workflows/ci.yml/badge.svg)](https://github.com/jvitorcosta/timeseries-analysis-streamlit/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.12%2B-blue)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-Upload a CSV, map its columns (id, date, actual, forecast, benchmark forecasts, class) and
-explore. The interface is in Portuguese.
+## Requirements
 
-## What it shows
+[uv](https://docs.astral.sh/uv/) (it installs Python 3.12 for you), Git ≥ 2.31 and `make`:
 
-**Global metrics**
-- Share of days above the 5% error tolerance, per series and per class.
-- MAPE per series and per class over any chosen period.
+| Tool | macOS | Linux (Debian/Ubuntu) | Windows (PowerShell) |
+| ---- | ----- | --------------------- | -------------------- |
+| uv   | `brew install uv` | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | `winget install astral-sh.uv` |
+| Git  | `brew install git` | `sudo apt install git` | `winget install Git.Git` |
+| make | `xcode-select --install` | `sudo apt install make` | `winget install ezwinports.make` |
 
-**Residual analysis**
-- Residual distributions and standardised residuals per series.
-- MAPE and RMSE by month and by weekday, to expose seasonal bias.
-- Error on public holidays (a São Paulo holiday calendar built on `pandas`, including
-  moving dates such as Carnival and Corpus Christi).
-- Classical seasonal decomposition and ACF/PACF plots of any column.
+All `make` targets work in bash, zsh, PowerShell and cmd. Without `make`, run the
+`uv run ...` line from the [Makefile](Makefile). On Windows, also run
+`git config --global core.longpaths true` once.
 
-**Benchmark**
-- Several forecasts side by side against the same actuals, with a colour-coded MAPE table
-  per series, so you can see where a challenger model beats the incumbent.
+## Quickstart
 
-Metrics live in [`kpi.py`](kpi.py): MAPE, MPE, MSE, RMSE and RSE.
-
-## Input format
-
-One row per series per day. Column names are free, you pick them in the sidebar:
-
-| Column | Example | Purpose |
-|--------|---------|---------|
-| id | `site_a` | the series being forecast |
-| date | `2022-03-01` | daily timestamp |
-| actual | `1520.4` | observed value |
-| forecast | `1498.0` | the model being evaluated |
-| benchmark(s) | `1610.2` | one or more forecasts to compare against |
-| class | `zone_2` | a grouping for aggregated views |
-
-## Run it
-
-```sh
-pip install -r requirements.txt
-streamlit run app.py
+```bash
+git clone https://github.com/jvitorcosta/timeseries-analysis-streamlit.git
+cd timeseries-analysis-streamlit
+make install   # uv sync + pre-commit hooks
+make check     # lint + typecheck + tests
 ```
 
-Or with Docker:
+## Development
 
-```sh
-docker build -t forecast-error-analysis .
-docker run -p 8501:8501 forecast-error-analysis
+| Command          | What it does                              |
+| ---------------- | ----------------------------------------- |
+| `make help`      | List every target                         |
+| `make format`    | Ruff format + safe autofixes              |
+| `make lint`      | Ruff lint + format check                  |
+| `make typecheck` | mypy (strict)                             |
+| `make test`      | pytest                                    |
+| `make cov`       | pytest with coverage (fails under 80%)    |
+| `make check`     | Everything CI runs                        |
+| `make upgrade`   | Bump all deps in `uv.lock`                |
+
+Add dependencies with `uv add <pkg>` (runtime) or `uv add --dev <pkg>` (tooling).
+
+## Project layout
+
+```
+.
+├── CLAUDE.md              # Context Claude Code loads every session
+├── .mcp.json              # Shared MCP servers
+├── .claude/
+│   ├── settings.json      # Permissions + hooks (team-shared)
+│   ├── rules/             # Topic-scoped guidance (style, testing, API)
+│   ├── commands/          # /review, /fix-issue
+│   ├── skills/            # Auto-loaded workflows (release)
+│   ├── agents/            # code-reviewer, security-auditor
+│   └── hooks/             # Bash guard + auto-format
+├── src/forecast_eval/
+├── tests/
+├── Makefile
+└── pyproject.toml
 ```
 
-## Status
+## Working with Claude Code
 
-A 2022 project, kept as it was built (Python 3.9, Streamlit 1.5). Today I'd add a sample
-dataset and a hosted demo, move the metrics into a tested package, and add prediction
-intervals and bias tracking alongside MAPE.
+This repo ships a full `.claude/` setup. See [CLAUDE.md](CLAUDE.md) for the
+project context and [CONTRIBUTING.md](CONTRIBUTING.md#working-with-claude-code)
+for how to extend it. Personal overrides go in `CLAUDE.local.md` and
+`.claude/settings.local.json`; both are gitignored.
 
-**Stack:** Python, Streamlit, pandas, NumPy, Plotly, statsmodels
+## Keeping up with the template
+
+This project was generated from a [Copier](https://copier.readthedocs.io) template.
+To pull in template improvements:
+
+```bash
+uvx copier update
+```
+
+`README.md`, `CHANGELOG.md` and `src/forecast_eval/__init__.py` belong to this project:
+`copier update` leaves them alone (`protect_project_files` in `.copier-answers.yml`).
+
+## License
+
+[MIT](LICENSE) © Vitor Pinheiro
