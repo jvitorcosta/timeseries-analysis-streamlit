@@ -83,6 +83,13 @@ def test_metrics_page_states_the_denominators(app: AppTest) -> None:
     assert "divides by the actual" in captions
 
 
+@pytest.mark.parametrize("statistic", ["Days above tolerance", "MAPE", "RMSE"])
+def test_metrics_page_draws_only_the_chosen_statistic(app: AppTest, statistic: str) -> None:
+    app.radio(key="statistic").set_value(statistic).run()
+    assert_clean(app)
+    assert len(app.get("plotly_chart")) == 2
+
+
 def test_zero_actual_days_are_reported(app: AppTest) -> None:
     open_page(app, "Residuals")
     assert any("zero actual" in c.value for c in app.caption)

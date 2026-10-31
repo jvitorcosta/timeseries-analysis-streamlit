@@ -72,8 +72,14 @@ def render(frame: pd.DataFrame, models: dict[str, str]) -> None:
     st.caption(GROUP_NOTE)
 
     totals = group_daily_totals(frame)
-    tolerance_tab, mape_tab, rmse_tab = st.tabs(["Days above tolerance", "MAPE", "RMSE"])
-    with tolerance_tab:
+    statistic = st.radio(
+        "Statistic", ["Days above tolerance", "MAPE", "RMSE"], horizontal=True, key="statistic"
+    )
+    if statistic == "MAPE":
+        _pair(frame, totals, mape_by, "MAPE", "MAPE (%)", theme.MAPE)
+    elif statistic == "RMSE":
+        _pair(frame, totals, rmse_by, "RMSE", "RMSE", theme.RMSE)
+    else:
         tolerance = st.selectbox(
             "Tolerance (%)", TOLERANCES, format_func=lambda t: f"{t:g}%", key="tolerance"
         )
@@ -85,7 +91,3 @@ def render(frame: pd.DataFrame, models: dict[str, str]) -> None:
             "Share of days (%)",
             theme.FORECAST,
         )
-    with mape_tab:
-        _pair(frame, totals, mape_by, "MAPE", "MAPE (%)", theme.MAPE)
-    with rmse_tab:
-        _pair(frame, totals, rmse_by, "RMSE", "RMSE", theme.RMSE)
