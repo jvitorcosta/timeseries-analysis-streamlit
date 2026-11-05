@@ -1,21 +1,32 @@
 # Forecast error analysis
 
 [![CI](https://github.com/jvitorcosta/timeseries-analysis-streamlit/actions/workflows/ci.yml/badge.svg)](https://github.com/jvitorcosta/timeseries-analysis-streamlit/actions/workflows/ci.yml)
-![Python](https://img.shields.io/badge/python-3.12%2B-blue)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://forecast-error-analysis.streamlit.app)
 
 A single MAPE number says a forecast is "5% off". It doesn't say **where**: which series,
 which weekdays, which holidays, or whether a simpler baseline would have done better.
 This app answers those questions for daily forecasts.
 
-I first built it in 2022 for daily demand forecasting, to compare candidate models against
-the incumbent forecast, series by series and day by day. This version is a rebuild on a
-current stack, with tested metrics and a synthetic sample dataset.
+**Status:** finished
 
 **[Try the live demo](https://forecast-error-analysis.streamlit.app)**. It loads the sample data, so there is nothing to upload. The app may sleep when idle and take a moment to wake.
 
 ![Residuals page](docs/app.png)
+
+## Why I built it
+
+I first built it in 2022 for daily demand forecasting, to compare candidate models against
+the incumbent forecast, series by series and day by day. This version is a rebuild on a
+current stack, with tested metrics and a synthetic sample dataset.
+
+## Quick start
+
+You need [uv](https://docs.astral.sh/uv/) and `make`.
+
+```bash
+make install
+make run
+```
 
 ## What it shows
 
@@ -73,15 +84,6 @@ guesses common ones.
 
 Rows without an actual or forecast are left out and counted. The app opens on a seeded,
 fully synthetic sample, which you can download to see the format.
-
-## Run it
-
-You need [uv](https://docs.astral.sh/uv/) and `make`.
-
-```bash
-make install
-make run
-```
 
 ## Development
 
