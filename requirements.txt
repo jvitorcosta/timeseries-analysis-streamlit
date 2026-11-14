@@ -104,7 +104,7 @@ starlette==1.10.0
     # via streamlit
 statsmodels==0.15.0
     # via timeseries-analysis-streamlit
-streamlit==1.66.1
+streamlit==1.67.0
     # via timeseries-analysis-streamlit
 typing-extensions==4.16.0
     # via
