@@ -1,7 +1,7 @@
 -e .
 altair==6.3.0
     # via streamlit
-anyio==4.15.1
+anyio==4.16.0
     # via
     #   starlette
     #   streamlit
